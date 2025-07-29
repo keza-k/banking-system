@@ -3,20 +3,19 @@ import java.util.ArrayList;
 
 import com.example.demo.model.Client;
 public class Constants {
-        public void createClients(){
-        Client customer =new Client();
-        customer.name = "Keza";  
-        customer.ID= "001";
-        customer. accountNumber = "00108082112";
-        customer.Amount = 120000;
-        customer.Pin = 12345;
-        ArrayList<ArrayList<Client>> ourcustomers = new ArrayList<>();
-        ArrayList<Client> customer1 = new ArrayList<>();
-        customer1.add(new Client());
+        public static  ArrayList<Client> createClients(){
 
+                /// dummy client
+        ArrayList<Client> ourcustomers = new ArrayList<>();
+        ArrayList<Integer> dumb = new ArrayList<>();
 
-        
-        // ourcustomers.add(client);
+        ourcustomers.add(new Client("Keza","001","00121",0,12345));
+        ourcustomers.add(new Client("Kayitare","002","00212",0,23456));
+        ourcustomers.add(new Client("Trinity","003","00308",0,34567));
+        ourcustomers.add(new Client("Michael","004","00408",0,45678));
+        ourcustomers.add(new Client("Trust","005","00519",0,56789));
+
+        return ourcustomers;
         }
     
 }
