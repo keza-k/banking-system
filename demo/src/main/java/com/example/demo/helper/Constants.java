@@ -7,15 +7,14 @@ public class Constants {
 
                 /// dummy client
         ArrayList<Client> ourcustomers = new ArrayList<>();
-        ArrayList<Integer> dumb = new ArrayList<>();
 
         ourcustomers.add(new Client("Keza","001","00121",0,12345));
         ourcustomers.add(new Client("Kayitare","002","00212",0,23456));
         ourcustomers.add(new Client("Trinity","003","00308",0,34567));
         ourcustomers.add(new Client("Michael","004","00408",0,45678));
         ourcustomers.add(new Client("Trust","005","00519",0,56789));
-
-        return ourcustomers;
+        return ourcustomers;       
         }
+        
     
 }
