@@ -4,10 +4,10 @@ public class Client {
      private String Name;
      private String ID;
      private String accountNumber;
-     private int Amount;
+     private double Amount;
      private int Pin;
 
-        public Client(String name, String ID, String accountNumber, int amount, int pin ) {
+        public Client(String name, String ID, String accountNumber, double amount, int pin ) {
             this.Name=name;
             this.ID=ID;
             this.accountNumber=accountNumber;
@@ -24,8 +24,8 @@ public class Client {
     public String getAccountNumber(){return accountNumber;}
     public void setAccountNumber(String accountNumber){this.Name=accountNumber;}
 
-    public int getAmount(){return Amount;}
-    public void setAmount(int amount){this.Amount=amount;}
+    public double getAmount(){return Amount;}
+    public void setAmount(double amount){this.Amount=amount;}
     
     public int getPin(){return Pin;}
     public void setPin(int pin){this.Pin=pin;}
