@@ -13,7 +13,8 @@ public class Client {
             this.accountNumber=accountNumber;
             this.Amount=amount;
             this.Pin=pin;
-    }
+        }
+    
 
     public String getName(){return Name;}
     public void setName(String name){this.Name=name;}
@@ -22,7 +23,7 @@ public class Client {
     public void setID(String ID){this.ID=ID;}
 
     public String getAccountNumber(){return accountNumber;}
-    public void setAccountNumber(String accountNumber){this.Name=accountNumber;}
+    public void setAccountNumber(String accountNumber){this.accountNumber=accountNumber;}
 
     public double getAmount(){return Amount;}
     public void setAmount(double amount){this.Amount=amount;}

@@ -1,16 +1,14 @@
 package com.example.demo.model;
 
 public class Transaction {
-    public String id;
-    public String transactionType;
-    public double  amount;
-    public String accountNumber;
-    public int pin;
+    private String id;
+    private String transactionType;
+    private double  amount;
+    private String accountNumber;
+    private int pin;
     private String timestamp;
     private String status;
-
-    public Transaction() {}
-
+    
     public Transaction(String id, String transactionType, double amount, String accountNumber, int pin) {
         this.id = id;
         this.transactionType = transactionType;

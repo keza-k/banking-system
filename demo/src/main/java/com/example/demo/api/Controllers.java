@@ -30,16 +30,20 @@ public class Controllers {
 
     @GetMapping("/menuSelect")
     public String menuInteraction(@RequestParam(required = false) Integer choices) {
-        if (choices == null) {
-            return "No choice provided";
-        }
-        System.out.println("Received Choice is " + choices);
         return Service.respondMenu(choices);
     }
 
     @PostMapping("/deposit")
     public String processDeposit(@RequestBody Transaction transaction) {
         return Service.processDeposit(transaction);
+    }
+    @PostMapping("/Withdraw")
+    public String processWithdraw(@RequestBody Transaction transaction) {
+        return Service.processWithdraw(transaction);
+    }
+    @PostMapping("/Transfer")
+    public String processTransfer(@RequestBody Transaction transaction) {
+        return Service.processTransfer(transaction);
     }
     
 }
