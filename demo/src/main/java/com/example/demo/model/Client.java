@@ -1,11 +1,23 @@
 package com.example.demo.model;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection ="clients")
 public class Client {
+
+    @Id
+     private String id;
      private String Name;
      private String ID;
      private String accountNumber;
      private double Amount;
      private int Pin;
+
+     public Client(){
+
+     }
+     
 
         public Client(String name, String ID, String accountNumber, double amount, int pin ) {
             this.Name=name;

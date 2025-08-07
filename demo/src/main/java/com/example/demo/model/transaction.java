@@ -8,8 +8,10 @@ public class Transaction {
     private int pin;
     private String timestamp;
     private String status;
+    private String senderAccNumber;
+    private String receiverAccNumber;
     
-    public Transaction(String id, String transactionType, double amount, String accountNumber, int pin) {
+    public Transaction(String id, String transactionType, double amount, String accountNumber, int pin, String senderAccountNumber, String receiverAccountNumber) {
         this.id = id;
         this.transactionType = transactionType;
         this.amount = amount;
@@ -17,6 +19,8 @@ public class Transaction {
         this.pin = pin;
         this.timestamp = java.time.LocalDateTime.now().toString();
         this.status = "PENDING";
+        this.senderAccNumber= senderAccountNumber;
+        this.receiverAccNumber = receiverAccountNumber;
     }
 
     public String getId() { return id; }
@@ -39,4 +43,11 @@ public class Transaction {
     
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public String getSenderAccountNumber() { return senderAccNumber; }
+    public void setsenderAccountNumber(String senderAccountNumber) { this.senderAccNumber = senderAccountNumber; }
+
+     public String getReceiverAccountNumber() { return receiverAccNumber; }
+    public void setreceiverAccountNumber(String receiverAccountNumber) { this.receiverAccNumber = receiverAccountNumber; }
+
 }
