@@ -1,5 +1,4 @@
 package com.example.demo.api;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dao.ClientRepository;
-import com.example.demo.helper.Constants;
 import com.example.demo.model.Client;
 import com.example.demo.model.Transaction;
+import com.example.demo.service.Balance;
 import com.example.demo.service.BankingService;
 
 @RestController
@@ -27,10 +26,18 @@ public class Controllers {
         this.bankingService = bankingService;
     }
 
+    private Balance balance;
+
+    public Controllers(Balance balance){
+        this.balance = balance;
+    }
+
+    @Autowired
+    private ClientRepository clientRepository;
 
     @GetMapping("/getAllCustomer")
     public List<Client> getAllClients(){
-        return ClientRepository.findAll();
+        return clientRepository.findAll();
     
     }
     @GetMapping("/gettheMenu")
@@ -39,7 +46,7 @@ public class Controllers {
     }
 
     @GetMapping("/menuSelect")
-    public String menuInteraction(@RequestParam(required = false) Integer choices) {
+    public String menuInteraction(@RequestParam Integer choices) {
         return bankingService.respondMenu(choices);
     }
 
@@ -55,5 +62,14 @@ public class Controllers {
     public String processTransfer(@RequestBody Transaction transaction) {
         return bankingService.processTransfer(transaction);
     }
+    @PostMapping("/CheckBalance")
+    public String checkBalance(@RequestBody Transaction transaction){
+        return balance.checkBalance(transaction);
+    }
+
+    // @PostMapping("/CreateClient")
+    // public String createClient(@RequestBody Client client) {
+    //     return bankingService.createClient(client);
+    // }
     
 }

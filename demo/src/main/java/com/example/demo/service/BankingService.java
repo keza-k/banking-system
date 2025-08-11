@@ -30,27 +30,28 @@ public class BankingService {
          String menuResponse;
         switch (choices) {
             case 0:
-                menuResponse="You selected: Register";
+                menuResponse="--Register--";
                 break;
             case 1:
-                    menuResponse="--Deposit--";
+                menuResponse="--Deposit--";
                 break;
             case 2:
-                menuResponse="You selected: Withdraw";
+                menuResponse="--Withdraw--";
                 break;
             case 3:
-                menuResponse="You selected: Tranfer";
+                menuResponse="--Tranfer--";
                 break;
             case 4:
-                menuResponse="You selected: Check Balance";
+                menuResponse="--Check Balance--";
                 break;
             case 5:
-                menuResponse="You selected: Reset Pin";
+                menuResponse="--Reset Pin--";
                 break;
             case 6:
-                menuResponse="You selected: Mini Statements";
+                menuResponse="--Mini Statements--";
+                break;
             default:
-                menuResponse="Imput a valid option";
+                menuResponse="Input a valid option";
         }
         return menuResponse;
         
@@ -89,19 +90,6 @@ public class BankingService {
                 
                 System.out.println("==Deposit==");
 
-                //Find client
-                // Client targetClient = null;
-                // for (Client client : clients) {
-                //     if (client.getAccountNumber().equals(transaction.getAccountNumber())) {
-                //         targetClient = client;
-                //         break;
-                //     }
-                // }
-                // //Incase the account number is not found.
-                // if (targetClient == null) {
-                //     transaction.setStatus("FAILED");
-                //     return  "Error: Account not found";
-                // }
                 //Step2: Get the amount;
                  if (transaction.getAmount() <= 0) {
                     transaction.setStatus("FAILED");
@@ -217,21 +205,17 @@ public class BankingService {
         public String processTransfer(Transaction transfer){
                 try {
 
-                Optional<Client> optionalSender = clientRepository.findByAccountNumber(transfer.getAccountNumber());
+                Optional<Client> optionalSender = clientRepository.findByAccountNumber(transfer.getSenderAccountNumber());
                 if (optionalSender.isEmpty()) {
                     transfer.setStatus("FAILED");
                     return "Error: Account not found";
                 }
 
-                Optional<Client> optionalReceiver = clientRepository.findByAccountNumber(transfer.getAccountNumber());
+                Optional<Client> optionalReceiver = clientRepository.findByAccountNumber(transfer.getReceiverAccountNumber());
                 if (optionalReceiver.isEmpty()) {
                     transfer.setStatus("FAILED");
                     return "Error: Account not found";
                 }
-
-
-                // Client targetClient = optionalClient.get(); 
-
 
             Client senderClient = optionalSender.get();
             Client receiverClient = optionalReceiver.get();
