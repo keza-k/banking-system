@@ -8,27 +8,27 @@ public class Client {
 
     @Id
      private String id;
-     private String Name;
+     private String name;
      private String accountNumber;
      private double Amount;
-     private int Pin;
+     private String pin;
 
      public Client(){
 
      }
      
 
-        public Client(String name, String id, String accountNumber, double amount, int pin ) {
-            this.Name=name;
+        public Client(String name, String id, String accountNumber, double amount, String pin ) {
+            this.name=name;
             this.id=id;
             this.accountNumber=accountNumber;
             this.Amount=amount;
-            this.Pin=pin;
+            this.pin=pin;
         }
     
 
-    public String getName(){return Name;}
-    public void setName(String name){this.Name=name;}
+    public  String getName(){return name;}
+    public  void setName(String name){this.name=name;}
 
     public String getID(){return id;}
     public void setID(String ID){this.id=ID;}
@@ -39,8 +39,8 @@ public class Client {
     public double getAmount(){return Amount;}
     public void setAmount(double amount){this.Amount=amount;}
     
-    public int getPin(){return Pin;}
-    public void setPin(int pin){this.Pin=pin;}
+    public String getPin(){return pin;}
+    public void setPin(String pin){this.pin=pin;}
     
 
 }

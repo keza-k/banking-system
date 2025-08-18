@@ -11,4 +11,5 @@ public class Constants {
 private ClientRepository clientRepository;
 
 List<Client> customers = clientRepository.findAll();
+
 }

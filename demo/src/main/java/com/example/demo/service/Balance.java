@@ -1,53 +1,48 @@
 package com.example.demo.service;
 
-import java.util.Optional;
 import java.util.Scanner;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.example.demo.dao.ClientRepository;
 import com.example.demo.model.Client;
 import com.example.demo.model.Transaction;
 
+@Service 
 public class Balance {
 
-private final ClientRepository clientRepository;
-
     @Autowired
-    public Balance(ClientRepository clientRepository){
-        this.clientRepository = clientRepository;
-    }
+    private ClientRepository clientRepository;
 
-    public String processBalance(Transaction transaction){
+    public String processBalance(Transaction getBalance){
         Scanner scanner= new Scanner(System.in);
         System.out.println("Enter your account number");
         String accNumber= scanner.nextLine();
 
         System.out.println("Enter Your pin");
-        int confpin = scanner.nextInt();
+        String confpin = scanner.nextLine();
 
-        transaction.setAccountNumber(accNumber);
-        transaction.setPin(confpin);
+        getBalance.setAccountNumber(accNumber);
+        getBalance.setPin(confpin);
 
-        return checkBalance(transaction);
+        return findBalance(getBalance);    
     }
 
-    public String checkBalance(Transaction balance){
-         Optional<Client> optionalClient = clientRepository.findByAccountNumber(balance.getAccountNumber());
-                if (optionalClient.isEmpty()) {
-                    balance.setStatus("FAILED");
-                    return "Error: Account not found";
+    public String findBalance(Transaction balancee){
+        System.out.println("Account Number: "+balancee.getAccountNumber()+" Pin: "+balancee.getPin());
+
+        Client client = clientRepository.findByAccountNumberAndPin(balancee.getAccountNumber(), balancee.getPin());
+                System.out.println("Client: "+client);
+                if (client==null) {
+                    balancee.setStatus("FAILED");
+                    return "Invalid Account Number or Pin";
                 }
+                 Client targetClient = client;
 
-                Client targetClient=optionalClient.get();
+                return "Your balance is " +20000;
 
-                if(targetClient.getPin()!=balance.getPin()){
-                    balance.setStatus("FAILED");
-                    return "Incorrect Pin";
-                }
-                balance.setAmount(targetClient.getAmount());
-
-                return String.format("Your balance is "+balance.getAmount());
-
+                
     }
 }
+
