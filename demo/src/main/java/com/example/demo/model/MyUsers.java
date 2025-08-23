@@ -1,35 +1,32 @@
 package com.example.demo.model;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 
-@Document(collection="Myusers")
+@Document(collection="Customers")
 public class MyUsers {
 
-    @Id
-    private String accountNumbers;
-    private String pins;
+   
+    private String accountNumber;
+    private String pin;
 
     public MyUsers(){
 
     }
 
     public MyUsers(String accountNumber, String pin){
-        this.accountNumbers=accountNumber;
-        this.pins=pin;
+        this.accountNumber=accountNumber;
+        this.pin=pin;
     }
 
-    public String getaccountNumber(){return accountNumbers;}
-    public void setName(String accountNumber){this.accountNumbers=accountNumber;}
+    public String getAccountNumber(){return accountNumber;}
+    public void setAccountNumber(String accountNumber){this.accountNumber=accountNumber;}
 
-    public String getPin(){return pins;}
-    public void setPin(String pin){this.pins=pin;}
+    public String getPin(){return pin;}
+    public void setPin(String pin){this.pin=pin;}
 
 
-    public String Users(Client users){
-        users.setAccountNumber();
-    }
+   
 
 }
 

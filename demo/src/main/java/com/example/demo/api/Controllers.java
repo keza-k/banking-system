@@ -1,5 +1,6 @@
 package com.example.demo.api;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dao.ClientRepository;
-import com.example.demo.dao.TransactionRespository;
 import com.example.demo.model.Client;
+import com.example.demo.model.MyUsers;
 import com.example.demo.model.Transaction;
 import com.example.demo.service.BankingService;
 
@@ -28,11 +29,18 @@ public class Controllers {
     //     this.balance = balance;
     // }
 
+
     @Autowired
     private ClientRepository clientRepository;
 
-    @Autowired 
-    private  TransactionRespository transactionRepository;
+    // @Autowired 
+    // private  TransactionRespository transactionRepository;
+
+    // @Autowired
+    // private MyUsers myUsers;
+
+    // @Autowired
+    // private MyUserRepository myUserRepository;
 
     @GetMapping("/getAllCustomer")
     public List<Client> getAllClients(){
@@ -62,20 +70,26 @@ public class Controllers {
         return bankingService.processTransfer(transaction);
     }
     @PostMapping("/findBalance")
-    public String checkBalance(@RequestBody Transaction balancee){
-        System.out.println("Request: "+balancee.getAccountNumber()+" PIN: "+balancee.getPin());
-        Client client = clientRepository.findByAccountNumber(balancee.getAccountNumber());
-        // Client Client = clientRepository.findByPin(balancee.getPin()).orElseThrow(() -> new RuntimeException("Client not found"));
-        // Client targetClient = client.get();
-        balancee.setPin(balancee.getPin());
-        // System.out.println("Client: "+targetClient.getAmount());
-        // System.out.println("Client1: "+Client.getAmount());
-        
-        return null;
+    public String checkBalance(@RequestBody Client balancee){
+        return bankingService.findBalance(balancee);
     }
 
     @PostMapping("/addClients")
         public String  processRegistration(@RequestBody Client client){
             return bankingService.processRegistration(client);
         }
+
+    @PostMapping("/Credentials")
+        public String loginProcess(@RequestBody MyUsers users){
+            return bankingService.Users(users);
+        }
+
+
+    @GetMapping("/miniStatements")
+    public List<Transaction> miniStatements(@RequestBody Map<String, String > request){
+        String accountNumber = request.get("accountNumber");
+        String pin = request.get("pin");
+
+        return bankingService.miniStatements(accountNumber, pin);
+    }
     }

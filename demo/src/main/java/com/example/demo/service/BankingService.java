@@ -1,20 +1,22 @@
 package com.example.demo.service;
-import java.util.Scanner;
-import java.util.UUID;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dao.ClientRepository;
 import com.example.demo.dao.TransactionRespository;
 import com.example.demo.model.Client;
+import com.example.demo.model.MyUsers;
 import com.example.demo.model.Transaction;
 
 @Service
 public class BankingService {
 
-    private ClientRepository clientRepository;
+    private final ClientRepository clientRepository;
     private TransactionRespository transactionRepository;
+    //  private MyUserRepository myUserRepository;
 
     @Autowired
     public BankingService(ClientRepository clientRepository){
@@ -26,9 +28,16 @@ public class BankingService {
         this.transactionRepository = transactionRepository;
     }
 
+    // @Autowired
+    // public void MyUsers(MyUserRepository myUserRepository){
+    //     this.myUserRepository = myUserRepository;
+    
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+
     public static String bankingmenu(){
         StringBuilder getMenu=new StringBuilder();
-        getMenu.append("*************************\n        K Banking       \n*************************\nWelcome to K Banking System\n0. Register\n1. Deposit\n2. Withdraw\n3.Transfer\n4. Check Balance\n5. Reset Pin\n6. Mini Statement");
+        getMenu.append("*************************\n        K Banking       \n*************************\nWelcome to K Banking System\n0. Register\n1. Deposit\n2. Withdraw\n3. Transfer\n4. Check Balance\n5. Reset Pin\n6. Mini Statement");
         return getMenu.toString();
     }
     public String respondMenu(int choices){
@@ -61,27 +70,6 @@ public class BankingService {
         }
         return menuResponse;
         
-        }
-
-        public String handleDeposits(Transaction transaction){
-        Scanner scanner= new Scanner(System.in);
-        UUID uuid = UUID.randomUUID();
-        System.out.print("Enter account number: ");
-        String accNumber = scanner.nextLine();
-
-        System.out.print("Enter amount to deposit: ");
-        double cashd = scanner.nextDouble();
-
-        System.out.print("Enter PIN: ");
-        String confpin = scanner.nextLine();
-        scanner.nextLine(); // consume newline
-
-        transaction.setAccountNumber(accNumber);
-        transaction.setAmount(cashd);
-        transaction.setPin(confpin);
-        transaction.setId(uuid.toString());
-
-        return processDeposit(transaction);
         }
 
         public String processDeposit(Transaction transaction) { 
@@ -139,25 +127,7 @@ public class BankingService {
             }
         }
 
-        public String handleWithdraws(Transaction transaction){
-        Scanner scanner= new Scanner(System.in);
-        System.out.print("Enter account number: ");
-        String accNumber = scanner.nextLine();
 
-        System.out.print("Enter amount to deposit: ");
-        double cashw = scanner.nextDouble();
-
-        System.out.print("Enter PIN: ");
-        String confpin = scanner.nextLine();
-        scanner.nextLine(); // consume newline
-
-        transaction.setAccountNumber(accNumber);
-        transaction.setAmount(cashw);
-        transaction.setPin(confpin);
-        transaction.setId(UUID.randomUUID().toString());
-
-        return processWithdraw(transaction);
-        }
 
         public String processWithdraw(Transaction transactions){
             
@@ -185,7 +155,7 @@ public class BankingService {
                 
 
                //carrying out transaction
-                double accBalance = targetClient.getAmount();//previous account balance
+                // double accBalance = targetClient.getAmount();//previous account balance
                 double newBalance = targetClient.getAmount() - transactions.getAmount();
                 double accNewBalance = newBalance;
                 targetClient.setAmount(accNewBalance);//current account balance
@@ -244,18 +214,20 @@ public class BankingService {
                 
                 double currentbalance = senderClient.getAmount();//sender's previous account balance
                 double newbalance = senderClient.getAmount()-transfer.getAmount();//sender's current account balance
-                double currenttBalance = receiverClient.getAmount();// receiver's previous account balance
-                double newwBalance = receiverClient.getAmount()+transfer.getAmount();//receiver's current account balance
+                // double currenttBalance = receiverClient.getAmount();// receiver's previous account balance
+                // double newwBalance = receiverClient.getAmount()+transfer.getAmount();//receiver's current account balance
                 transfer.setStatus("SUCCESS!");
                 transactionRepository.save(transfer);
 
-                return String.format("Transfer Successful!\n"+
-                                    "Sender's Account Holder: %s\n"+
-                                    "Receiver's Account Holder:%s\n"+
-                                    "Transaction ID: %s\n"+
-                                    "Amount Transfered: %.2f\n"+
-                                    "Your previous balance was: %.2f\n"+
-                                    "Your new balance is: %,2f\n",
+                return String.format("""
+                                     Transfer Successful!
+                                     Sender's Account Holder: %s
+                                     Receiver's Account Holder:%s
+                                     Transaction ID: %s
+                                     Amount Transfered: %.2f
+                                     Your previous balance was: %.2f
+                                     Your new balance is: %,2f
+                                     """,
                                     senderClient.getName(),
                                     receiverClient.getName(),
                                     transfer.getId(),
@@ -276,13 +248,75 @@ public class BankingService {
 
     public String processRegistration(Client clients){
 
-        if (clientRepository.existsByAccountNumber(clients.getAccountNumber())) {
-            return "Account with this number already exists!";
+       
+ if (clientRepository.existsByAccountNumber(clients.getAccountNumber())) {
+            return "Account with this Account Number already exists!";
+            
         }
+        
+        String hashedPin = passwordEncoder.encode(clients.getPin());
+        clients.setPin(hashedPin);
+        clients.setAccountNumber(clients.randomSequentialVal(6));
+        clients.setID(clients.generateSequentialID(4));
         clientRepository.save(clients);
         return "Clients registered successfully!";
-    
+
 
     }
+
+    public String findBalance(Client balancee){
+        Client client = clientRepository.findByAccountNumber(balancee.getAccountNumber());
+                
+                if (client==null) {
+                    balancee.setStatus("FAILED");
+                    return "Invalid Account Number";
+                }
+
+                if(!client.getPin().equals(balancee.getPin())){
+                    balancee.setStatus("FAILED");
+                    return "Incorrect Pin";
+                }
+                
+                Client targetClient = client;
+               return "Your balance is " +targetClient.getAmount();                
+    }
+
+     public String Users(MyUsers users){        
+        Client customer = clientRepository.findByAccountNumber(users.getAccountNumber());
+        System.err.println("the customer value is ===== "+customer.getPin());
+        if(customer != null){
+        if(!users.getPin().equals(customer.getPin())){
+            // users.setStatus("FAILED");
+            return "Invalid Account Number and Incorrect pin";
+        }
+        }
+             // users.setStatus("FAILED");
+            return String.format("Welcome %s!!! Login successful",customer.getName());
+    }
+
+    public List<Transaction> miniStatements(String accountNumber, String pin){
+        Client client = clientRepository.findByAccountNumber(accountNumber);
+        if(client != null){
+             if(!passwordEncoder.matches(pin, client.getPin())){
+            throw new RuntimeException("Invalid Account Number or pin!") ;
+        }
+    }        
+
+        List<Transaction> transactions = transactionRepository.findByAccountNumber(accountNumber);
+
+        if(transactions == null){
+            throw new RuntimeException("No transactions found for this account.");
+        }
+
+        return transactions.stream()
+                            .sorted((a,b) -> b.getTimestamp().compareTo(a.getTimestamp()))
+                            .limit(3)
+                            .toList() ;
+    
+   
+    
+    
+    
+}
 }
 
