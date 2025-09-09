@@ -7,20 +7,20 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class MyUsers {
 
    
-    private String accountNumber;
+    private String email;
     private String pin;
 
     public MyUsers(){
 
     }
 
-    public MyUsers(String accountNumber, String pin){
-        this.accountNumber=accountNumber;
+    public MyUsers(String email, String pin){
+        this.email=email;
         this.pin=pin;
     }
 
-    public String getAccountNumber(){return accountNumber;}
-    public void setAccountNumber(String accountNumber){this.accountNumber=accountNumber;}
+    public String getEmail(){return email;}
+    public void setEmail(String email){this.email=email;}
 
     public String getPin(){return pin;}
     public void setPin(String pin){this.pin=pin;}

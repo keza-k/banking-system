@@ -155,15 +155,15 @@ public class BankingService {
                 
 
                //carrying out transaction
-                // double accBalance = targetClient.getAmount();//previous account balance
-                double newBalance = targetClient.getAmount() - transactions.getAmount();
-                double accNewBalance = newBalance;
-                targetClient.setAmount(accNewBalance);//current account balance
-                // transaction.setAmount(newBalance);//current user balance
+                double accBalance = targetClient.getAmount();//previous account balance
+                double newBalance = accBalance - transactions.getAmount();
+                targetClient.setAmount(newBalance);//current account balance
                 transactions.setStatus("SUCCESS");
+                clientRepository.save(targetClient);
                 transactionRepository.save(transactions);
 
-                return String.format("Withdraw Successful! You have withdrawn "+transactions.getAmount()+" Your account balance is "+accNewBalance);
+
+                return String.format("Withdraw Successful! You have withdrawn "+transactions.getAmount()+" Your account balance is "+newBalance);
                                         // "AccountHolder %s\n"+
                                         // "Transaction ID %s\n"+
                                         // "Amount Withdrawn RWF%.2f\n"+
@@ -180,7 +180,7 @@ public class BankingService {
             }
              catch (Exception e) {
                 transactions.setStatus("FAILED");
-                return "Error: Withdraw failed - ";
+                return "Error: Withdraw failed - "+ e.getMessage();
             }
         
         }
@@ -248,12 +248,12 @@ public class BankingService {
 
     public String processRegistration(Client clients){
 
-       
  if (clientRepository.existsByAccountNumber(clients.getAccountNumber())) {
             return "Account with this Account Number already exists!";
             
         }
-        
+
+        // String email = ;
         String hashedPin = passwordEncoder.encode(clients.getPin());
         clients.setPin(hashedPin);
         clients.setAccountNumber(clients.randomSequentialVal(6));
@@ -282,14 +282,14 @@ public class BankingService {
     }
 
      public String Users(MyUsers users){        
-        Client customer = clientRepository.findByAccountNumber(users.getAccountNumber());
+        Client customer = clientRepository.findByEmail(users.getEmail());
         System.err.println("the customer value is ===== "+customer.getPin());
-        if(customer != null){
+        // if(customer != null){
         if(!users.getPin().equals(customer.getPin())){
             // users.setStatus("FAILED");
-            return "Invalid Account Number and Incorrect pin";
+            return "Invalid email and Incorrect pin";
         }
-        }
+        
              // users.setStatus("FAILED");
             return String.format("Welcome %s!!! Login successful",customer.getName());
     }
@@ -298,7 +298,7 @@ public class BankingService {
         Client client = clientRepository.findByAccountNumber(accountNumber);
         if(client != null){
              if(!passwordEncoder.matches(pin, client.getPin())){
-            throw new RuntimeException("Invalid Account Number or pin!") ;
+            throw new RuntimeException("Invalid email or pin!") ;
         }
     }        
 

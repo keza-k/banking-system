@@ -15,18 +15,21 @@ public final  class Client {
      private double Amount;
      private String pin;
      private String status;
+     private String email;
+
 
 
      public Client(){
 
      }
-        public Client(String Name, double amount, String pin ) {
+        public Client(String Name, double amount, String pin, String email ) {
             this.Name=Name;
             this.id= generateSequentialID(4);
             this.accountNumber=randomSequentialVal(6);
             this.Amount=amount;
             this.pin=pin;
             this.status = "PENDING";
+            this.email = email;
 
         }
     
@@ -49,6 +52,10 @@ public final  class Client {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
 
 
 
