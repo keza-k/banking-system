@@ -3,6 +3,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,8 +18,14 @@ import com.example.demo.model.Transaction;
 import com.example.demo.service.BankingService;
 
 @RestController
+@CrossOrigin(origins= "http://localhost:8000")
 @RequestMapping("/banking")
 public class Controllers {
+    @GetMapping("/havoc/{path:[^\\.]*}")
+    public String forward()
+    {
+        return  "forward:/";
+    }
 
     @Autowired
     private BankingService bankingService;
@@ -80,7 +87,7 @@ public class Controllers {
         }
 
     @PostMapping("/Credentials")
-        public String loginProcess(@RequestBody MyUsers users){
+        public Map<String,Object> loginProcess(@RequestBody MyUsers users){
             return bankingService.Users(users);
         }
 

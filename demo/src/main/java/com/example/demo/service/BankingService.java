@@ -1,5 +1,6 @@
 package com.example.demo.service;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -60,6 +61,7 @@ public class BankingService {
                 menuResponse="--Check Balance--";
                 break;
             case 5:
+            
                 menuResponse="--Reset Pin--";
                 break;
             case 6:
@@ -78,15 +80,15 @@ public class BankingService {
                 // System.out.println("The account number is: "+optionalClient.getAccountNumber());
                 if (optionalClient==null) {
                     transaction.setStatus("FAILED");
-                    return "Error: Account not found";
+                    return "Error: Account nott found";
                 }
 
                 Client targetClient = optionalClient;
 
                 
-                System.out.println("==Deposit==");
+                // System.out.println("==Deposit==");
 
-                //Step2: Get the amount;
+                // Step2: Get the amount;
                  if (transaction.getAmount() <= 0) {
                     transaction.setStatus("FAILED");
                     return "Error: Amount must be greater than 0";
@@ -103,11 +105,12 @@ public class BankingService {
                 double newBalance = currentBalance + transaction.getAmount();
                 targetClient.setAmount(newBalance);
                 transaction.setStatus("SUCCESS");
+                transaction.setTimestamp(java.time.LocalDateTime.now().toString());
                 clientRepository.save(targetClient);
                 transactionRepository.save(transaction);
 
     
-                return String.format("Deposit Successful!, Your new balance is "+newBalance);
+                return String.format("Deposit Successful!, you have deposited " +transaction.getAmount()+ " on your account. Your new balance is "+newBalance);
                                 // "Account Holder: %s\n" +
                                 // "Transaction ID: %s\n" +
                                 // "Amount Deposited: RWF%.2f\n" +
@@ -159,11 +162,12 @@ public class BankingService {
                 double newBalance = accBalance - transactions.getAmount();
                 targetClient.setAmount(newBalance);//current account balance
                 transactions.setStatus("SUCCESS");
+                transactions.setTimestamp(java.time.LocalDateTime.now().toString());
                 clientRepository.save(targetClient);
                 transactionRepository.save(transactions);
 
 
-                return String.format("Withdraw Successful! You have withdrawn "+transactions.getAmount()+" Your account balance is "+newBalance);
+                return String.format("Withdraw Successful! You have withdrawn "+transactions.getAmount()+" from your account. Your account balance is "+newBalance);
                                         // "AccountHolder %s\n"+
                                         // "Transaction ID %s\n"+
                                         // "Amount Withdrawn RWF%.2f\n"+
@@ -188,7 +192,7 @@ public class BankingService {
         public String processTransfer(Transaction transfer){
                 try {
 
-                Client optionalSender = clientRepository.findByAccountNumber(transfer.getSenderAccountNumber());
+                Client optionalSender = clientRepository.findByAccountNumber(transfer.getAccountNumber());
                 if (optionalSender==null) {
                     transfer.setStatus("FAILED");
                     return "Error: Account not found";
@@ -217,23 +221,24 @@ public class BankingService {
                 // double currenttBalance = receiverClient.getAmount();// receiver's previous account balance
                 // double newwBalance = receiverClient.getAmount()+transfer.getAmount();//receiver's current account balance
                 transfer.setStatus("SUCCESS!");
+                transfer.setTimestamp(java.time.LocalDateTime.now().toString());
                 transactionRepository.save(transfer);
 
-                return String.format("""
-                                     Transfer Successful!
-                                     Sender's Account Holder: %s
-                                     Receiver's Account Holder:%s
-                                     Transaction ID: %s
-                                     Amount Transfered: %.2f
-                                     Your previous balance was: %.2f
-                                     Your new balance is: %,2f
-                                     """,
-                                    senderClient.getName(),
-                                    receiverClient.getName(),
-                                    transfer.getId(),
-                                    transfer.getAmount(),
-                                    currentbalance,
-                                    newbalance);
+                return String.format("Transfer Successful!! You have transfered "+transfer.getAmount()+" to "+receiverClient.getName()+". Your Balance is "+newbalance);
+                                    //  Transfer Successful!
+                                    //  Sender's Account Holder: %s
+                                    //  Receiver's Account Holder:%s
+                                    //  Transaction ID: %s
+                                    //  Amount Transfered: %.2f
+                                    //  Your previous balance was: %.2f
+                                    //  Your new balance is: %,2f
+                                    //  """,
+                                    // senderClient.getName(),
+                                    // receiverClient.getName(),
+                                    // transfer.getId(),
+                                    // transfer.getAmount(),
+                                    // currentbalance,
+                                    // newbalance
                                 
         
         } 
@@ -248,8 +253,8 @@ public class BankingService {
 
     public String processRegistration(Client clients){
 
- if (clientRepository.existsByAccountNumber(clients.getAccountNumber())) {
-            return "Account with this Account Number already exists!";
+ if (clientRepository.existsByEmail(clients.getEmail())) {
+            return "Account with this Email already exists!";
             
         }
 
@@ -259,7 +264,7 @@ public class BankingService {
         clients.setAccountNumber(clients.randomSequentialVal(6));
         clients.setID(clients.generateSequentialID(4));
         clientRepository.save(clients);
-        return "Clients registered successfully!";
+        return "Client registered successfully!";
 
 
     }
@@ -281,26 +286,47 @@ public class BankingService {
                return "Your balance is " +targetClient.getAmount();                
     }
 
-     public String Users(MyUsers users){        
+     public Map<String, Object> Users(MyUsers users){        
         Client customer = clientRepository.findByEmail(users.getEmail());
         System.err.println("the customer value is ===== "+customer.getPin());
         // if(customer != null){
+        List<Transaction> transactions = transactionRepository.findByAccountNumber(customer.getAccountNumber());
         if(!users.getPin().equals(customer.getPin())){
             // users.setStatus("FAILED");
-            return "Invalid email and Incorrect pin";
+
+            return Map.of("status","FAILED") ;
+
+            
+            
+        }
+        else{
+            return Map.of(
+                "message", "Welcome  "+customer.getName()+", you have been successfully logged in!!",
+                "accountNumber", customer.getAccountNumber(),
+                "balance", customer.getAmount(),
+                "transactions",transactions,
+                "status", "PASS"
+                
+            );
         }
         
              // users.setStatus("FAILED");
-            return String.format("Welcome %s!!! Login successful",customer.getName());
+            
     }
 
     public List<Transaction> miniStatements(String accountNumber, String pin){
-        Client client = clientRepository.findByAccountNumber(accountNumber);
-        if(client != null){
-             if(!passwordEncoder.matches(pin, client.getPin())){
-            throw new RuntimeException("Invalid email or pin!") ;
-        }
-    }        
+    //     try {
+    //         Client client = clientRepository.findByAccountNumber(accountNumber);
+    //     System.out.println("Nameee==========="+client.getName());
+    //     // if(client.){
+    // //          if(!passwordEncoder.matches(pin, client.getPin())){
+    // //             System.out.println("invalid pin");
+    // //     // }
+    // // }        
+    //     } catch (Exception e) {
+    //         throw new RuntimeException(e) ;
+    //     }
+        
 
         List<Transaction> transactions = transactionRepository.findByAccountNumber(accountNumber);
 
@@ -308,15 +334,7 @@ public class BankingService {
             throw new RuntimeException("No transactions found for this account.");
         }
 
-        return transactions.stream()
-                            .sorted((a,b) -> b.getTimestamp().compareTo(a.getTimestamp()))
-                            .limit(3)
-                            .toList() ;
-    
-   
-    
-    
-    
+        return transactions;
 }
 }
 

@@ -10,5 +10,7 @@ public interface ClientRepository extends MongoRepository<Client, String>{
     // Client findByAccountNumberAndPin(String accountNumber, String pin);
     Client findByPin(String pin);
     boolean existsByAccountNumber(String accountNumber);
+    boolean existsByEmail(String email);
+
     
 }
